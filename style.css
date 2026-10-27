@@ -1,0 +1,323 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Songti SC", "SimSun", "Noto Serif SC", "PingFang SC", serif;
+  background: #120a18;
+  color: #fff;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- 照片滑动 ---------- */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景：同一张照片模糊放大，铺满屏幕、不露黑边 */
+.photo-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(32px) brightness(0.5) saturate(1.15);
+  transform: scale(1.12);
+}
+
+/* 前景：照片完整显示、适当缩小居中，不裁切 */
+.photo-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11vh 5vw 19vh;
+  z-index: 1;
+}
+
+.photo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+.caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9vh;
+  text-align: center;
+  padding: 0 24px;
+  z-index: 2;
+}
+
+.caption-text {
+  display: inline-block;
+  font-size: clamp(19px, 3vw, 34px);
+  line-height: 1.7;
+  padding: 14px 28px;
+  background: rgba(18, 10, 24, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  letter-spacing: 1px;
+}
+
+.caption-sub {
+  margin-top: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 3px;
+}
+
+/* ---------- 顶部标题 ---------- */
+.header {
+  position: fixed;
+  top: 26px;
+  left: 30px;
+  z-index: 10;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.header h1 {
+  font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", "楷体", "Kaiti SC", cursive;
+  font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: 400;
+  letter-spacing: 5px;
+}
+
+.header p {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+  letter-spacing: 3px;
+}
+
+/* ---------- 状态 ---------- */
+.status {
+  position: fixed;
+  top: 28px;
+  right: 30px;
+  z-index: 10;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 1px;
+  max-width: 60vw;
+  white-space: normal;
+  line-height: 1.4;
+  text-align: right;
+}
+
+/* ---------- 摄像头 ---------- */
+.camera {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  width: 170px;
+  z-index: 10;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #000;
+}
+
+.camera video {
+  width: 100%;
+  display: block;
+  transform: scaleX(-1);
+}
+
+.camera canvas {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.camera.hidden {
+  display: none;
+}
+
+/* ---------- 箭头 ---------- */
+.arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.2s;
+}
+
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.arrow.left {
+  left: 20px;
+}
+
+.arrow.right {
+  right: 20px;
+}
+
+/* ---------- 圆点 ---------- */
+.dots {
+  position: fixed;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.dot.active {
+  background: #ffd65a;
+  width: 26px;
+  border-radius: 6px;
+}
+
+/* ---------- 开始引导 ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12, 6, 18, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: opacity 0.4s;
+}
+
+.intro.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-card {
+  text-align: center;
+  padding: 42px 36px;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+}
+
+.intro-title {
+  font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", "楷体", "Kaiti SC", cursive;
+  font-size: 34px;
+  letter-spacing: 4px;
+  margin-bottom: 18px;
+}
+
+.intro p {
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.intro .muted {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 10px;
+}
+
+.intro button {
+  margin-top: 24px;
+  padding: 12px 44px;
+  font-size: 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff8fb1, #ff6b6b);
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 3px;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 600px) {
+  .camera {
+    width: 120px;
+    left: 16px;
+    bottom: 16px;
+  }
+  .photo-stage {
+    padding: 9vh 4vw 22vh;
+  }
+  .arrow {
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
+  .arrow.left {
+    left: 12px;
+  }
+  .arrow.right {
+    right: 12px;
+  }
+  .header {
+    top: 18px;
+    left: 18px;
+  }
+  .status {
+    top: 18px;
+    right: 16px;
+  }
+}
